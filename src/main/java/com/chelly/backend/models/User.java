@@ -31,7 +31,7 @@ import java.util.List;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_generator")
-    @SequenceGenerator(name = "user_seq_generator", sequenceName = "user_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "user_seq_generator", sequenceName = "user_seq_id_seq", allocationSize = 1)
     private Integer id;
 
     @Column(nullable = false, length = 25)
@@ -53,6 +53,7 @@ public class User implements UserDetails {
     @Column(length = 200)
     private String address;
 
+    @Column(name = "User_Level")
     private Integer level = 1;
     private Integer points = 0;
 
