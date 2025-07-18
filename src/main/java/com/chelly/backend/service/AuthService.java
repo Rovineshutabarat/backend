@@ -13,6 +13,7 @@ import com.chelly.backend.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,7 @@ public class AuthService {
         }
 
         List<Role> roles = new ArrayList<>();
-        roles.add(roleRepository.findByName("USER").orElseThrow(
+        roles.add(roleRepository.findByName("ADMIN").orElseThrow(
                 () -> new ResourceNotFoundException("Role was not found")
         ));
 
@@ -72,5 +73,10 @@ public class AuthService {
                 .email(user.getEmail())
                 .roles(user.getRoles())
                 .build();
+    }
+
+    public void logout() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        sessionService.findByUser(user).ifPresent(sessionService::deleteSession);
     }
 }

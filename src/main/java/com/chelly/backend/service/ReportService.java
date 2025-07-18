@@ -1,6 +1,7 @@
 package com.chelly.backend.service;
 
 import com.chelly.backend.models.Report;
+import com.chelly.backend.models.ReportSearchCriteria;
 import com.chelly.backend.models.ReportTimeline;
 import com.chelly.backend.models.User;
 import com.chelly.backend.models.enums.ReportCategory;
@@ -8,7 +9,7 @@ import com.chelly.backend.models.enums.ReportStatus;
 import com.chelly.backend.models.exceptions.ResourceNotFoundException;
 import com.chelly.backend.models.payload.request.ReportRequest;
 import com.chelly.backend.models.payload.request.UpdateReportStatusRequest;
-import com.chelly.backend.models.payload.response.ReportStats;
+import com.chelly.backend.models.specifications.ReportSpecification;
 import com.chelly.backend.repository.ReportRepository;
 import com.chelly.backend.repository.ReportTimelineRepository;
 import jakarta.validation.ValidationException;
@@ -30,14 +31,14 @@ public class ReportService {
         return reportRepository.findAll();
     }
 
-    public ReportStats getReportStats() {
-        return reportRepository.getReportStats().get();
-    }
-
     public Report findById(Integer id) {
         return reportRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Report not found with id: " + id)
         );
+    }
+
+    public List<Report> searchReports(ReportSearchCriteria criteria) {
+        return reportRepository.findAll(ReportSpecification.getSpecification(criteria));
     }
 
     public Report createReport(ReportRequest reportRequest) {

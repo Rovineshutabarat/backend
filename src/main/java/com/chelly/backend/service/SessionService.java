@@ -41,7 +41,15 @@ public class SessionService {
         return sessionRepository.findByToken(token);
     }
 
+    public Optional<UserSession> findByUser(User user) {
+        return sessionRepository.findByUser(user);
+    }
+
     public Boolean isSessionValid(UserSession userSession) {
         return userSession.getExpiresAt().isAfter(Instant.now());
+    }
+
+    public void deleteSession(UserSession userSession) {
+        sessionRepository.delete(userSession);
     }
 }

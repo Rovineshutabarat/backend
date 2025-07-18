@@ -1,6 +1,7 @@
 package com.chelly.backend.service;
 
 import com.chelly.backend.models.Report;
+import com.chelly.backend.models.ReportSearchCriteria;
 import com.chelly.backend.models.User;
 import com.chelly.backend.models.enums.ReportStatus;
 import com.chelly.backend.models.exceptions.ResourceNotFoundException;
@@ -8,6 +9,7 @@ import com.chelly.backend.models.payload.request.UpdateProfileRequest;
 import com.chelly.backend.models.payload.response.ReportStats;
 import com.chelly.backend.models.payload.response.UserResponse;
 import com.chelly.backend.models.payload.response.UserStats;
+import com.chelly.backend.models.specifications.ReportSpecification;
 import com.chelly.backend.repository.ReportRepository;
 import com.chelly.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -16,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,13 +39,26 @@ public class UserService {
 
     public ReportStats getUserReportStats() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return reportRepository.getUserReportStatsByUserId(user.getId()).get();
+        return reportRepository.getReportStats(user.getId());
     }
 
-    public List<Report> searchReportsByUser(String keyword, ReportStatus reportStatus) {
+    public List<Report> searchReportsByUser(ReportSearchCriteria criteria) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return reportRepository.searchAndFilterReports(keyword, reportStatus, user.getId());
+        criteria.setUserId(user.getId());
+
+        return reportRepository.findAll(ReportSpecification.getSpecification(criteria));
     }
+
+    public List<Report> getUserReportHistory() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ReportSearchCriteria criteria = new ReportSearchCriteria();
+        criteria.setUserId(user.getId());
+        criteria.setStartDate(LocalDateTime.now().minusWeeks(1));
+        criteria.setEndDate(LocalDateTime.now());
+
+        return reportRepository.findAll(ReportSpecification.getSpecification(criteria));
+    }
+
 
     @Transactional
     public UserResponse getCurrentUser() {
@@ -58,7 +74,7 @@ public class UserService {
                 .birthdate(user.getBirthdate())
                 .image(user.getImage())
                 .roles(user.getRoles())
-                .reportStats(reportRepository.getUserReportStatsByUserId(user.getId()).get())
+                .reportStats(reportRepository.getReportStats(user.getId()))
                 .stats(UserStats.builder()
                         .level(user.getLevel())
                         .points(user.getPoints())
@@ -85,6 +101,10 @@ public class UserService {
         user.setAddress(updateProfileRequest.getAddress());
 
         return userRepository.save(user);
+    }
+
+    public Integer getCurrentUserRank(Integer userId) {
+        return userRepository.getUserRank(userId);
     }
 
 

@@ -7,13 +7,14 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
+@AllArgsConstructor // Crucial for JPA to use a constructor with all arguments in order
 @NoArgsConstructor
 public class ReportStats {
-    private Integer totalReports;
-    private Integer verifiedReports;
-    private Integer accuracy;
-    private Integer pendingReports;
-    private Integer inProgressReports;
-    private Integer completedReports;
+    private Long totalReports = 0L;
+    private Long verifiedReports = 0L;
+    private Double accuracy = 0.0; // THIS MUST BE DOUBLE
+    private Long pendingReports = 0L;
+    private Long inProgressReports = 0L;
+    private Long completedReports = 0L;
+
 }

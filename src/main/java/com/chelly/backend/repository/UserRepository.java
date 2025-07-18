@@ -15,10 +15,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     boolean existsByEmail(String email);
 
-    @Query("SELECT u FROM User u ORDER BY u.points DESC limit 100")
+    @Query("SELECT user FROM User user ORDER BY user.points DESC limit 100")
     List<User> findTopUsersForLeaderboard();
 
 
-    @Query("SELECT COUNT(u) + 1 FROM User u WHERE u.points > (SELECT u2.points FROM User u2 WHERE u2.id = :userId)")
+    @Query("SELECT COUNT(user) + 1 FROM User user WHERE user.points > (SELECT user2.points FROM User user2 WHERE user2.id = :userId)")
     Integer getUserRank(@Param("userId") Integer userId);
 }
