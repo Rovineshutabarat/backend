@@ -1,5 +1,6 @@
 package com.chelly.backend.models;
 
+import com.chelly.backend.models.enums.WithdrawalStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -19,16 +20,31 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "roles")
+@Table(name = "withdrawals")
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class Role {
+public class Withdrawal {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_role_generator")
-    @SequenceGenerator(name = "user_role_generator", sequenceName = "role_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "withdrawal_generator")
+    @SequenceGenerator(name = "withdrawal_generator", sequenceName = "withdrawal_id_seq", allocationSize = 1)
     private Integer id;
 
-    @Column(unique = true, nullable = false)
-    private String name;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    private User user;
+
+    @Column(nullable = false)
+    private Double pointsExchanged;
+
+    @Column(nullable = false)
+    private Double amount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private WithdrawalStatus withdrawalStatus = WithdrawalStatus.PENDING;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wallet_id", referencedColumnName = "id", nullable = false)
+    private Wallet wallet;
 
     @CreationTimestamp
     @Column(updatable = false)

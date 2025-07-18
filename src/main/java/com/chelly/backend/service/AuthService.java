@@ -47,7 +47,7 @@ public class AuthService {
                 .phoneNumber(registerRequest.getPhoneNumber())
                 .roles(roles)
                 .level(1)
-                .points(0)
+                .points(105)
                 .build());
     }
 

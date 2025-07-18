@@ -10,12 +10,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -66,6 +69,17 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     @JsonManagedReference
     private List<Role> roles;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss", timezone = "Asia/Jakarta")
+    @JsonIgnore
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss", timezone = "Asia/Jakarta")
+    @JsonIgnore
+    private Date updatedAt;
 
     @JsonIgnore
     @Override

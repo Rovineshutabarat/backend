@@ -1,5 +1,6 @@
 package com.chelly.backend.models;
 
+import com.chelly.backend.models.enums.WalletName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -19,16 +20,28 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "roles")
+@Table(name = "bank_accounts")
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class Role {
+public class Wallet {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_role_generator")
-    @SequenceGenerator(name = "user_role_generator", sequenceName = "role_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "wallet_generator")
+    @SequenceGenerator(name = "wallet_generator", sequenceName = "wallet_id_seq", allocationSize = 1)
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private WalletName walletName;
     @Column(unique = true, nullable = false)
-    private String name;
+    private String accountNumber;
+    @Column(nullable = false)
+    private String accountHolderName;
+
+    @Column(nullable = false)
+    private Boolean isDefault = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    private User user;
 
     @CreationTimestamp
     @Column(updatable = false)

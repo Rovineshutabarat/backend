@@ -3,6 +3,7 @@ package com.chelly.backend.handler;
 import com.chelly.backend.models.exceptions.AuthException;
 import com.chelly.backend.models.exceptions.DuplicateElementException;
 import com.chelly.backend.models.exceptions.ResourceNotFoundException;
+import com.chelly.backend.models.exceptions.WithdrawalException;
 import com.chelly.backend.models.payload.response.ErrorResponse;
 import com.chelly.backend.models.payload.response.ValidationErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,6 +45,14 @@ public class GlobalExceptionHandler {
         return ResponseHandler.buildErrorResponse(
                 request,
                 HttpStatus.UNAUTHORIZED,
+                exception.getMessage());
+    }
+
+    @ExceptionHandler(WithdrawalException.class)
+    public ResponseEntity<ErrorResponse> handleWithdrawalException(WithdrawalException exception, HttpServletRequest request) {
+        return ResponseHandler.buildErrorResponse(
+                request,
+                HttpStatus.BAD_REQUEST,
                 exception.getMessage());
     }
 
